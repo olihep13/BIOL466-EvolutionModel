@@ -1,0 +1,13 @@
+﻿  Main.cpp
+C:\Users\OLIVI\VisualStudio\SFMLGameOfLife\Main.cpp(11,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\OLIVI\VisualStudio\SFMLGameOfLife\Main.cpp(27,63): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\OLIVI\VisualStudio\SFMLGameOfLife\Main.cpp(27,56): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+  SFMLGameOfLife.vcxproj -> C:\Users\OLIVI\VisualStudio\SFMLGameOfLife\x64\Debug\SFMLGameOfLife.exe

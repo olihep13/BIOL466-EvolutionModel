@@ -1,0 +1,1 @@
+C:\Users\OLIVI\VisualStudio\SFMLGameOfLife\x64\Release\SFMLGameOfLife.exe

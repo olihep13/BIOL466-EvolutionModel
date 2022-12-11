@@ -1,0 +1,24 @@
+﻿  Main.cpp
+C:\Users\OLIVI\VisualStudio\SFMLGameOfLife\Main.cpp(1,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\OLIVI\VisualStudio\SFMLGameOfLife\Main.cpp(120,85): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\OLIVI\VisualStudio\SFMLGameOfLife\Main.cpp(241,144): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\OLIVI\VisualStudio\SFMLGameOfLife\Main.cpp(241,89): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\OLIVI\VisualStudio\SFMLGameOfLife\Main.cpp(248,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\OLIVI\VisualStudio\SFMLGameOfLife\Main.cpp(344,19): warning C4305: 'initializing': truncation from 'double' to 'float'
+C:\Users\OLIVI\VisualStudio\SFMLGameOfLife\Main.cpp(472,38): warning C4244: 'argument': conversion from 'int' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\OLIVI\VisualStudio\SFMLGameOfLife\Main.cpp(475,37): warning C4244: 'argument': conversion from 'int' to '_Ty', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Users\OLIVI\VisualStudio\SFMLGameOfLife\Main.cpp(247,15): warning C4101: 'randSpecies': unreferenced local variable
+  Generating code
+  3 of 392 functions ( 0.8%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  SFMLGameOfLife.vcxproj -> C:\Users\OLIVI\VisualStudio\SFMLGameOfLife\x64\Release\SFMLGameOfLife.exe
