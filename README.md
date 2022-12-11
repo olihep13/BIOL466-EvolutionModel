@@ -1,0 +1,130 @@
+# BIOL466-EvolutionModel
+BIOL 466 - Modeling Coevolution with Cellular Automata
+
+Simulation of Coevolution using Cellular Automata
+Olivier Hepler 260952348
+BIOL 466
+Supervisor: Virginie Millien
+McGill University
+ 
+ 
+“To play life you must have a fairly large checkerboard and a plentiful supply of flat counters of two colors. It is possible to work with pencil and graph paper but it is much easier, particularly for beginners, to use counters and a board.” (M. Gardner, Scientific American, October 1970).
+
+Introduction:
+
+ Climate change, an unintended and generally unforeseen consequence of human fossil fuel consumption has in the past decades quite abruptly become a global concern. Due to the earth’s tremendous human population and the fact that each individual requires a constant supply of manufactured resources to continue living, our species’ massive consumption of energy is unavoidable. Thus, since we are currently lacking sufficient renewable energy sources it seems as though we will have to continue burning fossil fuels for the foreseeable future and therefore it does not seem likely that climate change will suddenly decelerate (Holechek & Geli & Sawalhah & Valdez, 2022).
+ 
+To preserve the safety of life on our planet during this inevitable global warming, we must be able to predict and understand the unintended consequences that will occur. Large-scale population migrations have already begun to be recorded as the effects of climate change on local environments push different species out of their habitats (Shepard & Wissinger & Wood & Greig, 2022). The ranges of formerly separated species may begin overlapping and cause novel interactions between them. This may lead to new interspecific interactions and thus, coevolution and possible speciation will occur (Carlson & Albery & Merow, 2022). Understanding these new interactions and their effect on a species’ health is important if we want to make educated decisions to prevent the loss of wildlife. This is where a computer simulation of coevolution between two species may be valuable.
+
+This paper describes an attempt at simulating what effect range overlap between two competing species has on their average size. To reproduce the complexity seen in nature we will be implementing a cellular automaton, a grid of cells that interact with each other based on a simple set of rules, and a genetic algorithm that mimics evolution amongst these cells. To model range overlap and sympatry we will record what happens when cells of different species evolve next to one another over multiple generations and then we will compare their sizes to the size of groups of cells living in allopatry. We will test the hypothesis that two cells of different species living in sympatry will show a greater difference in body size than two similar pairs living in allopatry. We predict that the hypothesis is true and that we will see a statistically significant difference between the size difference for sympatric cells and for allopatric cells.
+
+Materials and Method:
+
+A cellular automaton (ca) is a set of cells, each with a state and a neighborhood of surrounding cells. Each cell in the set of cells changes states once over a single generation based on a given rule set that is dependent on the states of the neighborhood cells of that particular cell (Wolfram, 2002).
+
+The most trivial ca is called an elementary ca and it is a one-dimensional grid of cells each with only two possible states. In this ca every cell’s neighborhood consists of two cells, the one to its left and the one to its right, except for the right-most and left-most cells who each only have one neighbor. In this one-dimensional ca there exist 23=8 possible state configurations that a cell and its neighborhood can have because each cell has 2 possible states, alive or dead, and in a neighborhood, there are 2 total cells plus the one middle cell (Wolfram, 2002).   
+  
+If we defined what the output state was for a cell in a new generation depending on the states of its neighbors and of itself, of which there are 23=8 possible combinations of their states, then we would have a set of rules that assigns either the alive or dead state to each of these combinations. Thus, we could create 28=256 total possible rule sets because every state configuration outputs the state of the middle cell in the next generation. In only slightly more complex ca’s the set of possible rule sets increases exponentially as you increase the size of the neighborhood or increase the number of states that cells in your ca can occupy (Wolfram, 2002).
+
+The ca we implemented in this project is a 2 state and two-dimensional machine. Each generation consists of a two-dimensional grid of cells whose states update at every generation depending on the states of their neighborhood cells and of themselves. We used this type of ca because it was highly documented by research and most closely resembled population dynamics in nature. We decided that the neighborhood configuration we were going to use would consist of all 8 surrounding cells that are horizontally, vertically, and diagonally adjacent to the middle cell. This neighborhood type is called the Moore neighborhood, named after Edward Moore, a pioneer in the field. Here we can see that there are 29=512 possible state combinations for a cell and its neighborhood since there are 8 neighbors and 1 middle cell. Thus, there are 2512 possible rule sets we could implement for this type of ca, functionally an infinite amount (Wolfram, 2002).  
+
+When you allow cellular automata to operate freely you might assume that the patterns they exhibit would be very predictable, however, you soon realize that their visual behaviors can become quite complex and/or seemingly random. This however is not always the case and is entirely dependent upon the rule set you assign your ca. There seem to be four general possibilities for the behavior of a cellular automaton over time. The first two behaviors are the least sophisticated and most common. A ca may tend towards uniformity, where every cell will end up in one state and stay there permanently. It may also go towards repetition, a behavior where each cell will repeat a pattern of states over successive generations (Wolfram, 2002).
+
+The other two behaviors are the more unusual ones. A ca may operate with seeming randomness, where each cell's behavior seems to be independent of its previous state and the patterns observed can be used to generate random numbers. Lastly, a ca may exhibit complexity, an ordered yet unpredictable transition of cell states. This behavior is the one that most resembles the complexity created by life on earth and is the least common among the rule sets, this is the behavior we used in our project to model population movement (Wolfram, 2002).
+
+To most accurately simulate a natural environment not only did we need to use a rule set that gave our ca a complexity-yielding behavior, but we also needed to assign every cell certain properties other than just the alive or dead state they occupied. These properties would simulate the attributes of organisms in a population and consisted of a species value, a temperature value, a size gene, a size value encoded by this gene, and a resource abundance value.
+
+The species value quite trivially is just an integer that specifies which species a cell belongs to. This value is randomly assigned to all the living cells of our ca’s first generation. Anytime a cell is born, i.e., enters the living state from the dead state, after the first generation we determine which species it will become depending on which species is largest in numbers in its neighborhood. That dominant species decides the new cells' species and its size.
+
+The temperature value is hard coded into every cell at the beginning of our simulation no matter the state the cell occupies. It is a floating point number corresponding to the y-value of that cell within the grid, mapped between 0 and 1. We decided to make the higher latitudes of the map colder and the lower ones warmer and allowed only larger cells into the colder climate and smaller cells into the warmer climate. This served to mimic the observed temperature size rule phenomenon that says that individuals in colder temperatures grow into larger adults than those in warmer temperatures.
+
+The gene value we gave each cell was a three-bit binary number that was then encoded into their size value which is a floating point number between 0 and 1. I used a 3-bit binary number as it allowed me to apply mutations to a cell's size quite easily by just flipping a random bit instead of having to add or subtract some amount, it was trivially implemented using an array data type. On the first generation of our ca we assign every living cell a random gene value, all other cells that are born after that first generation inherit their gene value from their parent cell.
+
+Lastly, the resource abundance value was a floating point number between 0 and 1 that updated at every generation for each cell, no matter what state it occupied. This value came from a 3-dimensional Perlin noise map that determined how many resources a cell had access to and whether it would be able to survive onto the next generation. This value tried to mimic resource distribution observed in nature using random but smooth numbers in a two-dimensional map whose 3rd dimension was time, one generation translated to one time step.
+
+The purpose of using a cellular automaton in this project was to use complexity-yielding rules to imitate the population dynamics seen in nature. We decided to try out three different complexity-yielding rules to see whether varying them would alter the effects of our experiment. The actual evolution of the properties of each cell would not come from the rules of the ca but instead from an algorithm within it. 
+ 
+Genetic algorithm:  
+ 
+The algorithm type we implemented to mimic evolution is called a genetic algorithm and is based on the same principles as observed evolution in nature. This algorithm was applied at every generation to every cell that was being born, entering the living state from the dead state, and it was made of three key parts, variation, selection, and inheritance.
+
+On a cell’s “birth” we must first select its fittest genetic parent. To do this we look at the neighborhood of that cell and find the predominant species within it. From that group, we choose the fittest parent by assigning each one a fitness value depending upon how close their size is to an ideal size. This ideal size value changes whether there exists another species in the neighborhood of the cell being born.
+
+If there exists only one species type within the neighborhood of the cell being born, then the ideal size is based only on the temperature property of that cell. This serves to mimic how for many organisms their size is heavily associated with the temperature of their environment. Larger organisms tend to thrive in colder climates whereas smaller organisms tend to thrive in warmer climates.
+
+However, if there exists another species within the neighborhood of the cell being born, the fittest parent becomes the cell that is furthest in size from the average size of the cells that were not a part of the predominant species. This serves to mimic inter-specific resource competition and how individuals under exploitative competition will have an advantage if they can survive on fewer or different resources than their current competitors. This interaction is usually illustrated in nature by a change in the physical size of individuals and that is why in our algorithm we selected for size (Buskirk & Cereghetti & Hess, 2017).
+
+At the end of this process, the parent cell we deem most fit is the one whose size is closest to one of the two ideal sizes defined above. The cell being born will then inherit the size-encoding gene of its parent. The last feature we require in this algorithm to effectively imitate evolution is variation. Once the cell being born inherits the genes from its parent cell, we give each bit within that gene a certain probability of being flipped. The bits that encode larger size differences have a lower chance of being flipped as more drastic mutations are less likely.
+
+Usually, these variations are merely unsuccessful mutations that are immediately selected out of our population's gene pool, however, depending on the location of cell groups and their size differences they can be deemed useful by the evolutionary process and can cause observable changes in size throughout a population or in smaller groups within them.
+ 
+Unique Features: 
+ 
+To mimic the complexity found in nature within our ca we implemented some new properties. Firstly, we introduced a third species into the ca and tested our hypothesis on all three. Initially, we only wanted to see what would happen if we ran our simulation on 2 species, however, adding a 3rd created a more likely scenario as species interaction in the wild often involves more than just two. Seeing what our genetic algorithm would do when it was involved with multiple species interaction was something we were also quite curious about.
+
+Another idea we used was testing our hypotheses on a variety of rules for our ca. The most popular rule that actually inspired this project is called John Conway's Game of Life and was initially the only rule we were going to use because it already produces quite spectacular complexity, however, there are many others that do so as well and we became curious about whether these rules might yield different results. Thus, we decided to try out 3 rules, John Conway's Game of Life, Pseudo Life, and 2X2 (Wojtowicz, 2001). 
+ 
+Outlining the rules:
+ 
+The first rule we used is called John Conway’s Game Of Life and is defined as follows, if a cell is in the alive state, it requires 2 or 3 alive neighbors to survive onto the next generation. If a cell is in the dead state and has exactly 3 alive neighbors, it is born into the next generation. This rule is by far the most popular as it was discovered at a time when computers were becoming increasingly accessible and the life-like complexity this rule produced was of tremendous interest to computer scientists and mathematicians involved in the study of self-organization and artificial life. Researchers doing work on the Game of Life rule were especially enamored by the different patterns created within this complexity, each one defined by a general behavior. These included oscillators, where a set of cells returns to their initial states after a finite number of generations, still life, where a set of cells will not change from one state to the next, and spaceships, where a set of cells will travel across the map. It was also published in the October 1970 issue of Scientific America where it attracted the public eye and provoked quite a bit of discourse about determinism and free will in our own lives (Wojtowicz, 2001).
+
+The next rule we used is called Pseudo Life and is a slight variation of the Game of Life rule. It is defined as follows, if a cell is in the alive state, it requires 2, 3, or 8 alive neighbors to survive onto the next generation. If a cell is in the dead state and has 3, 5, or 7 alive neighbors, it is born into the next generation. It too creates interesting complexity but generates denser sets of cells and does not create most of the patterns seen in Game of Life (Wojtowicz, 2001).
+The last rule we used is called 2X2 and is also a variation of the Game of Life rule. It is defined as follows, if a cell is in the alive state, it requires 1, 2, or 5 alive neighbors to survive onto the next generation. If a cell is in the dead state and has 3 or 6 alive neighbors, it is born into the next generation. This rule creates novel oscillator and spaceship patterns and also seems to expand more slowly across the map than the Game of Life cells (Wojtowicz, 2001).
+ 
+Measurements:  
+ 
+Our hypothesis tested whether there was a significant difference between the size difference for two sympatric cells compared to the size difference between two allopatric cells at the same latitude. Two cells living in sympatry in our ca were equivalent to two cells of different species living within each other's Moore neighborhood. Two allopatric cells in our ca were equivalent to two cells of different species with the same latitude whose neighborhoods only contained their own species.
+
+To test our hypothesis, we ran our cellular automaton with each of the 3 complexity rules we wanted to use and tried each one with 2 species and then with 3 species present on the map for a total of 6 simulations. At each simulation, we recorded 400 pairs of sympatric and allopatric cell size differences. A pair of sympatric and allopatric size differences consist of the size difference between two cells of species x and y living in sympatry and the size difference of two cells also of species x and y living in allopatry at the same latitude. If at any generation, we could not find a suitable sympatric species or allopatric species we did not record any data and skipped to the next generation. We then created a script in the R language that took in our 6 sets of data and plotted a bar graph for each one with the mean and standard deviation of sympatric and allopatric size differences. We also ran a paired two-tailed t-test on all 6 data sets to demonstrate that there is a statistically significant difference between the size difference for sympatric cells and the size difference for allopatric cells.
+ 
+Results: 
+ 
+A paired two-tailed t-test was used on the data collected from our simulations to see whether a cell living in sympatry would in fact experience larger evolved size differences than one living in allopatry.
+ 
+ 
+Game Of Life Rule: 
+ 
+For the simulation using the Game of Life rule and 2 species on the map we got a t-value of  t399=8.1597, and a p-value of p=4.42810-15. For our simulation using 3 species, we got a t-value of  t399=9.3611, and a p-value of p<2.210-16. Thus, there is in fact a significant difference between the size difference for two cells living in sympatry compared to two living in allopatry when we use the Game of Life rule and allow 2 or 3 species to evolve and move throughout the map. Our calculated t-values and p-values indicate that whether a cell is living in sympatry or in allopatry will be a strong predictor of the size of the cell. 
+ 
+ 
+Pseudo Life Rule:
+ 
+For the simulation using the Pseudo Life rule and 2 species on the map we got a t-value of  t399=15.329, and a p-value of p<2.210-16. For our simulation using 3 species, we got a t-value of  t399=15.675, and a p-value of p<2.210-16. Thus, there is in fact a significant difference between the size difference for two cells living in sympatry compared to two living in allopatry when we use the Pseudo Life rule and allow 2 or 3 species to evolve and move throughout the map. Our calculated t-values and p-values indicate that whether a cell is living in sympatry or in allopatry will be a strong predictor of the size of the cell. 
+ 
+ 
+2X2 Rule:
+ 
+For the simulation using the 2X2 rule and 2 species on the map we got a t-value of t399=13.695, and a p-value of p<2.210-16. For our simulation using 3 species, we got a t-value of  t399=10.933, and a p-value of p<2.210-16. Thus, there is in fact a significant difference between the size difference for two cells living in sympatry compared to two living in allopatry when we use the 2X2 rule and allow 2 or 3 species to evolve and move throughout the map. Our calculated t-values and p-values indicate that whether a cell is living in sympatry or in allopatry will be a strong predictor of the size of the cell. 
+ 
+Discussion: 
+ 
+Our attempt at simulating coevolution between 2 and 3 species using a cellular automaton and a genetic algorithm showed that a large size difference between two cells of different species was positively related to the pair living in sympatry, i.e., sharing resources, and negatively related to the pair living in allopatry. 
+  	
+This supports the competitive exclusion principle that states that two species can’t have the same niche in a habitat and stably coexist. The niche our simulation looked at was the size of each cell and our genetic algorithm mimicked resource partitioning, the idea that if a species can consume nonoverlapping resources with its competitor they will better co-exist. Our model showed that resource partitioning drove consistent evolutionary changes in size amongst individuals at the boundary where two species occupying the same niche met. This matched our prediction stated in the introduction.
+
+Our simulation was however very limited in the scope of what it could replicate. It is in no way a replacement for true population dynamics seen in nature as we are missing so many of the variables that make up these populations and that determine how they act. This is merely an oversimplification that looks at one property of a species, its size, and investigates what effect resource access will have on it when we follow accepted ecological systems rules. 
+To further improve this simulation adding more properties to each of our cells and defining new interactions amongst cells would be a good start. Another interesting avenue one could take is changing the map itself. Our simulation takes place in a continuous 200 by 200 grid of cells but you could add physical barriers throughout the map and observe its effects on the properties of the cells.
+
+Another interesting idea to further investigate would be the asynchronous updating of our ca. The classical synchronous update method used in our ca means that every cell is evaluated once at each generation from left to right, top to bottom. The patterns formed by our rules are very dependent upon this evaluation pattern. However, such uniformity of change rarely exists in nature, and yet the self-organization of organisms persists. Thus, to mimic that, you could implement asynchronous updating of cells, meaning that at each generation randomly selected cells are to be updated. You do however still update the same number of cells at every generation (Suzudo, 2004).
+
+Lastly, on multiple occasions, we observed an interesting phenomenon while running these simulations where a species could become stuck at a certain latitude and would be prevented from traveling into an empty region of the map. This was because the population had not yet evolved the appropriate size to enter this new latitude due to the temperature of that area, colder latitudes required larger sizes, and warmer ones required smaller sizes. We observed that after some finite number of generations, variations in the population's gene pool would eventually allow cells to enter the new areas. This would produce an “explosive” effect where you would see many cells suddenly travel into the new area at once. We thought this was an interesting and clear illustration of evolution that should be mentioned.
+ 
+Conclusion:
+ 
+In conclusion, within the cellular automaton described above, we found that two cells of different species living in sympatry showed a statistically significant greater difference in body size than two similar pairs living in allopatry. This matched our prediction. However, this relationship is only true in our closed system which has very particular parameters and is not nearly as complex as the ecological worlds we observe in nature. This simulation did however show that populations with specific rules of interaction can be generically modeled with a cellular automaton. We can generally predict how an ecological system will react to changes in its environment. This study serves as a mere beginning to the uses of cellular automata in the prediction of species movement during climate change and requires more in-depth work to become a reliable tool for ecological decision-making.
+ 
+ 
+
+References:
+Wolfram, S. (1983). Statistical mechanics of cellular automata. Reviews of modern physics, 55(3), 601. 
+Wolfram, S. (2002). A New Kind Of Science. Wolfram Media.
+Wojtowicz, M. (2001).Cellular Automata rules lexicon.
+Chopard, B., Sloot, P. M. (2004). Cellular Automata: 6th International Conference on Cellular Automata for Research and Industry, ACRI 2004, Amsterdam, The Netherlands, October 25-28, 2004. Proceedings. Germany: Springer. 
+Suzudo, T. (2004). Searching for Pattern-Forming Asynchronous Cellular Automata – An Evolutionary Approach. In: Sloot, P.M.A., Chopard, B., Hoekstra, A.G. (eds) Cellular Automata. ACRI 2004. Lecture Notes in Computer Science, vol 3305. Springer, Berlin, Heidelberg. 
+Salzberg, C., Sayama, H. (2004). Heredity, Complexity, and Surprise: Embedded Self-Replication and Evolution in CA. In: Sloot, P.M.A., Chopard, B., Hoekstra, A.G. (eds) Cellular Automata. ACRI 2004. Lecture Notes in Computer Science, vol 3305. Springer, Berlin, Heidelberg. 
+Kim, SK., Shin, J., An, SI. (2022). Widespread irreversible changes in surface temperature and precipitation in response to CO2 forcing. Nat. Clim. Chang. 12, 834–840. 
+Carlson, C.J., Albery, G.F., Merow, C.  (2022). Climate change increases cross-species viral transmission risk. Nature 607, 555–562. 
+VanDerWal, J., Murphy, H., Kutt, A. (2013). Focus on poleward shifts in species' distribution underestimates the fingerprint of climate change. Nature Clim Change 3, 239–243. 
+Holechek JL, Geli HME, Sawalhah MN, Valdez R. A Global Assessment: Can Renewable Energy Replace Fossil Fuels by 2050? Sustainability. 2022; 14(8):4792. 
+Shepard, I. D., Wissinger, S. A., Wood, Z. T., & Greig, H. S. (2022). Predators balance consequences of climate-change-induced habitat shifts for range-shifting and resident species. Journal of Animal Ecology, 91, 334– 344.  
+Van Buskirk, J., Cereghetti, E., & Hess, J. S. (2017). Is bigger really better? Relative and absolute body size influence individual growth rate under competition. Ecology and evolution, 7(11), 3745–3750.
